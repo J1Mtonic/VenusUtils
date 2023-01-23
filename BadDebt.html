@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="author" content="J1Mtonic">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Venus Protocol: Bad Debts</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://mottie.github.io/tablesorter/css/theme.blue.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tablesorter@latest/dist/js/jquery.tablesorter.combined.min.js"></script>
+    <style> body,h1,h2,h3,h4,h5 {font-family: "Roboto"} </style>
+</head>
+<body onload="fetchDebtors();">
+    <table class="tblData tablesorter">
+        <thead>
+            <th class="sorter-false">Deposits</th>
+            <th class="sorter-false">Borrows</th>
+            <th class="sorter-false">TVL</th>
+            <th class="sorter-false">Debt</th>
+            <th class="sorter-false">Debtors</th>
+            <th class="sorter-false">Updated</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <table id="tblDebtors" class="tblDebtors tablesorter">
+        <thead>
+            <th class="sorter-false">Address</th>
+            <th>Debt</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script type="text/javascript">
+        const debtorsContainer = document.createElement("div");
+        document.body.append(debtorsContainer);
+        
+        async function fetchDebtors() {            
+            fetch('https://raw.githubusercontent.com/Risk-DAO/simulation-results/main/bad-debt/latest/BSC_venus.json')
+            .then(response => response.json())
+            .then(renderData)
+            .catch(error => console.error('Error:', error));
+        }
+        function renderData(debtorsObject) {
+            $(function() { $(".tblData").tablesorter({theme : 'blue'});});
+            let addCtrl = "<tr>"
+                addCtrl += "<td>" + nFormatter(Math.abs(debtorsObject.deposits), 2) + "</td>"
+                addCtrl += "<td>" + nFormatter(Math.abs(debtorsObject.borrows), 2) + "</td>"
+                addCtrl += "<td>" + nFormatter(Math.abs(debtorsObject.tvl), 2) + "</td>"
+                addCtrl += "<td>" + nFormatter(Math.abs(debtorsObject.total), 2) + "</td>"
+                addCtrl += "<td>" + debtorsObject.users.length + "</td>"
+                addCtrl += "<td>" + new Date(debtorsObject.updated * 1000).toLocaleString() + "</td>"
+                addCtrl += "</tr>";
+                $(".tblData tbody").append(addCtrl);
+
+            let arrayDebtors = debtorsObject.users;
+            let i = 1;
+            $(function() { $(".tblDebtors").tablesorter({theme : 'blue'});});
+            Object.keys(arrayDebtors).forEach((key) => {
+                let User = arrayDebtors[key].user;
+                let BadDebt = Number(arrayDebtors[key].badDebt);
+                debtorRow(`${User}`, `${BadDebt}`);
+            });
+            $(function() { $(".tblDebtors").find("th:contains(Debt)").trigger("sort"); markDebtors();});
+        }
+        function debtorRow(user, baddebt) {
+            let addCtrl = "<tr>"
+                addCtrl += "<td>" + "<a href='https://debank.com/profile/" + user + "?chain=bsc' target='_blank'>" + user + "</a>" + "</td>"
+                addCtrl += "<td>" + baddebt + "</td>"
+                addCtrl += "</tr>";
+                $(".tblDebtors tbody").append(addCtrl);
+        }
+        function markDebtors() {
+            var table = document.getElementById("tblDebtors");
+            var rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+            for (var i = 0; i < rows.length; i++) {
+                var debtCell = rows[i].getElementsByTagName("td")[1];
+                var debtValue = parseFloat(debtCell.innerHTML);
+                debtCell.innerHTML = nFormatter(Math.abs(debtValue), 1);
+            }        
+        }
+        function nFormatter(value, decimals) {            
+            let venusdecimals = 1000000000000000000;
+            if (value < venusdecimals) return value = "<1"
+            else {
+                value = (value / venusdecimals).toString().replace(/[^0-9.]/g, "");
+                let si = [
+                    { value: 1, symbol: "" },
+                    { value: 1e3, symbol: "k" },
+                    { value: 1e6, symbol: "M" }
+                ];
+                let i;
+                for (i = si.length - 1; i > 0; i--) {
+                    if (value >= si[i].value) {
+                    break;
+                    }
+                }            
+                return (
+                    (value / si[i].value)
+                    .toFixed(decimals)
+                    .replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1") + si[i].symbol
+                );
+            }
+        }
+    </script>
+</body>
+</html>
