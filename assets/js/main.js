@@ -42,6 +42,10 @@ jQuery(document).ready(function($) {
         $(".popup2").addClass("show");
         $(".popup2").append('<div class="close-popup2 backface"></div>');        
     });
+    $(".open-popup3").click(function(){        
+        $(".popup3").addClass("show");
+        $(".popup3").append('<div class="close-popup3 backface"></div>');        
+    });
     // CLOSE POPUP SEQUENCE
     $(document).on('click', '.close-popup1', function(){         
         $(".popup1").removeClass("show");
@@ -50,5 +54,9 @@ jQuery(document).ready(function($) {
     $(document).on('click', '.close-popup2', function(){         
         $(".popup2").removeClass("show");
         $(".popup2 .backface").remove();        
+    });
+    $(document).on('click', '.close-popup3', function(){         
+        $(".popup3").removeClass("show");
+        $(".popup3 .backface").remove();        
     });
 });
