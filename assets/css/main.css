@@ -570,7 +570,7 @@ a:hover {
     z-index: 5;
     top: 60%;
     left: 50%;
-    max-width: 650px;
+    max-width: 620px;
     padding: 10px 10px;
     -webkit-transform: translate(-50%,-50%);
     -ms-transform: translate(-50%,-50%);
