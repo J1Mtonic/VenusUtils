@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="author" content="J1Mtonic">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VAI</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+
+</head>
+<body>
+    <form>
+        <p>
+            <label>Wallet Address: <input type="text" autocomplete="on" id="accountAddress" /></label>
+            <button type="button" onclick="javascript:getMintedRepayVAI()">Search</button>
+        </p>
+        <p>
+            <label>Minted VAI: </label>
+            <label id="mintedVAI"></label>
+        </p>
+        <p>
+            <label>Accrued Interest: </label>
+            <label id="accruedInterest"></label>
+        </p>
+    </form>
+    <script type="text/javascript">
+        async function getMintedRepayVAI() {
+            const provider = new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org");
+            const getBep20Abi = "http://api.bscscan.com/api?module=contract&action=getabi&address=";
+            const bscscanAPI = "&apikey=J5HERDUSE8HWU7HISSURZY1349VBWHX31F";
+            const contractComptroller = "0xf2721703d5429bec86bd0ed86519e0859dd88209";
+            const contractVAIController = "0x8a1e5db8f622b97f4bccec4684697199c1b1d11b";
+            const contractUnitroller = "0xfd36e2c2a6789db23113685031d7f16329158384";
+            const contractVAIUnitroller = "0x004065D34C6b18cE4370ced1CeBDE94865DbFAFE";
+            const accountAddress = document.getElementById("accountAddress").value;
+            const web3 = new Web3(provider);
+            let decimals = 1000000000000000000;
+            let mintedVAI = 0;
+            let repayAmount = 0;
+            try {
+                let ComptrollerAbi = await fetch(getBep20Abi + contractComptroller + bscscanAPI).then(response => response.json()).then(data => {
+                    return JSON.parse(data.result);
+                });
+                let myUnitroller = new web3.eth.Contract(ComptrollerAbi, contractUnitroller);
+                mintedVAI = await myUnitroller.methods.mintedVAIs(accountAddress).call();
+                let VAIControllerAbi = await fetch(getBep20Abi + contractVAIController + bscscanAPI).then(response => response.json()).then(data => {
+                    return JSON.parse(data.result);
+                });
+                let myVAIUnitroller = new web3.eth.Contract(VAIControllerAbi, contractVAIUnitroller);
+                repayAmount = await myVAIUnitroller.methods.getVAIRepayAmount(accountAddress).call();
+            } catch (err) { }
+            document.getElementById("mintedVAI").innerHTML = mintedVAI / decimals;
+            document.getElementById("accruedInterest").innerHTML = (repayAmount - mintedVAI) / decimals;
+        }
+    </script>
+</body>
+</html>
