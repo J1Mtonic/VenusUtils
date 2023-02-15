@@ -11,7 +11,7 @@
 <body>
     <form>
         <p>
-            <label>Wallet Address: <input type="text" autocomplete="on" id="walletAddress" /></label>
+            <label>Account Address: <input type="text" autocomplete="on" id="accountAddress" /></label>
             <button type="button" onclick="javascript:getTotalSupply()">Search</button>
         </p>
         <p>
@@ -30,9 +30,11 @@
     <script type="text/javascript">
         async function getTotalSupply() {
             const provider = new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org");
-            const bep20Abi = [{ "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "vrtConversionAddress", "type": "address" }], "name": "VRTConversionSet", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "recipient", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amountClaimed", "type": "uint256" }], "name": "VestedTokensClaimed", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "recipient", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "startTime", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "withdrawnAmount", "type": "uint256" }], "name": "XVSVested", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "recipient", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "XVSWithdrawn", "type": "event" }, { "constant": true, "inputs": [], "name": "TOTAL_VESTING_TIME", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "contract XVSVestingProxy", "name": "xvsVestingProxy", "type": "address" }], "name": "_become", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "_notEntered", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "admin", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "depositAmount", "type": "uint256" }], "name": "deposit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "getCurrentTime", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "internalType": "address", "name": "recipient", "type": "address" }], "name": "getWithdrawableAmount", "outputs": [{ "internalType": "uint256", "name": "totalWithdrawableAmount", "type": "uint256" }, { "internalType": "uint256", "name": "totalVestedAmount", "type": "uint256" }, { "internalType": "uint256", "name": "totalWithdrawnAmount", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "implementation", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "_xvsAddress", "type": "address" }], "name": "initialize", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "initialized", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "pendingAdmin", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "pendingImplementation", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "_vrtConversionAddress", "type": "address" }], "name": "setVRTConverter", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "internalType": "address", "name": "", "type": "address" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "vestings", "outputs": [{ "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "startTime", "type": "uint256" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "uint256", "name": "withdrawnAmount", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "vrtConversionAddress", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "xvs", "outputs": [{ "internalType": "contract IBEP20", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "xvsDecimalsMultiplier", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }]
-            const contractAddress = "0xb28dec7c7ac80f4d0b6a1b711c39e444cde8b2ce";
-            const walletAddress = document.getElementById("walletAddress").value;
+            const getBep20Abi = "https://api.bscscan.com/api?module=contract&action=getabi&address=";
+            const bscscanAPI = "&apikey=J5HERDUSE8HWU7HISSURZY1349VBWHX31F";
+            const contractXVSVesting = "0xa9dd0536ab0699d60c28ce369ff366a1e621bff1";
+            const contractXVSVestingProxy = "0xb28dec7c7ac80f4d0b6a1b711c39e444cde8b2ce";
+            const accountAddress = document.getElementById("accountAddress").value;
             const web3 = new Web3(provider);
             let decimals = 0;
             let XVSwithdrawableAmount = 0;
@@ -42,13 +44,16 @@
             let startTime = 0;
             let i = 0;
             try {
-                const tokenContract = new web3.eth.Contract(bep20Abi, contractAddress);
-                decimals = await tokenContract.methods.xvsDecimalsMultiplier().call();
-                XVSwithdrawableAmount = await tokenContract.methods.getWithdrawableAmount(walletAddress).call();
-                let currentTime = await tokenContract.methods.getCurrentTime().call();
-                let totalVestingTime = await tokenContract.methods.TOTAL_VESTING_TIME().call();                
+                let XVSVestingAbi = await fetch(getBep20Abi + contractXVSVesting + bscscanAPI).then(response => response.json()).then(data => {
+                    return JSON.parse(data.result);
+                });
+                const myXVSVestingProxy = new web3.eth.Contract(XVSVestingAbi, contractXVSVestingProxy);
+                decimals = await myXVSVestingProxy.methods.xvsDecimalsMultiplier().call();
+                XVSwithdrawableAmount = await myXVSVestingProxy.methods.getWithdrawableAmount(accountAddress).call();
+                let currentTime = await myXVSVestingProxy.methods.getCurrentTime().call();
+                let totalVestingTime = await myXVSVestingProxy.methods.TOTAL_VESTING_TIME().call();                
                 while (true) {
-                    XVSvestings = await tokenContract.methods.vestings(walletAddress, i++).call();
+                    XVSvestings = await myXVSVestingProxy.methods.vestings(accountAddress, i++).call();
                     startTime = Number(XVSvestings.startTime);
                     if ((startTime + Number(totalVestingTime)) > Number(currentTime))
                     {
