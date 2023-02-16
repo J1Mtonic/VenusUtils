@@ -34,6 +34,10 @@ jQuery(document).ready(function($) {
         frictionY: 0.1,
     });    
     // OPEN POPUP SEQUENCE
+    $(".open-popup0").click(function(){        
+        $(".popup0").addClass("show");
+        $(".popup0").append('<div class="close-popup0 backface"></div>');        
+    });
     $(".open-popup1").click(function(){        
         $(".popup1").addClass("show");
         $(".popup1").append('<div class="close-popup1 backface"></div>');        
@@ -47,6 +51,10 @@ jQuery(document).ready(function($) {
         $(".popup3").append('<div class="close-popup3 backface"></div>');        
     });
     // CLOSE POPUP SEQUENCE
+    $(document).on('click', '.close-popup0', function(){         
+        $(".popup0").removeClass("show");
+        $(".popup0 .backface").remove();        
+    });
     $(document).on('click', '.close-popup1', function(){         
         $(".popup1").removeClass("show");
         $(".popup1 .backface").remove();        
