@@ -45,12 +45,6 @@
             let decimals = 10**18;
             VAIinfo();
 
-        async function myABI(ABIcontractAddr) {
-            try {
-                return await fetch(bscscangetABI + ABIcontractAddr + bscscanAPI).then(response => response.json()).then(data => { return JSON.parse(data.result); });
-            } catch (err) { }
-        }
-
         async function VAIinfo() {
             let VAIrepayRate = 0;
             let VAIPrice = 0;
