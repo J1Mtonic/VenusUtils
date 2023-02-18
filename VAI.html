@@ -22,31 +22,62 @@
             <label>Accrued Interest: </label>
             <label id="accruedInterest"></label>
         </p>
+        <p>
+            <label>VAI Repay Rate: </label>
+            <label id="VAIrepayRate"></label>
+        </p>
+        <p>
+            <label>VAI Price: </label>
+            <label id="VAIPrice"></label>
+        </p>
     </form>
     <script type="text/javascript">
-        async function getMintedRepayVAI() {
             const provider = new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org");
-            const getBep20Abi = "https://api.bscscan.com/api?module=contract&action=getabi&address=";
+            const bscscangetABI = "https://api.bscscan.com/api?module=contract&action=getabi&address=";
             const bscscanAPI = "&apikey=J5HERDUSE8HWU7HISSURZY1349VBWHX31F";
-            const contractComptroller = "0xf2721703d5429bec86bd0ed86519e0859dd88209";
-            const contractVAIController = "0x8a1e5db8f622b97f4bccec4684697199c1b1d11b";
-            const contractUnitroller = "0xfd36e2c2a6789db23113685031d7f16329158384";
-            const contractVAIUnitroller = "0x004065D34C6b18cE4370ced1CeBDE94865DbFAFE";
-            const accountAddress = document.getElementById("accountAddress").value;
+            const Comptroller = "0xf2721703d5429bec86bd0ed86519e0859dd88209";
+            const VAIController = "0x8a1e5db8f622b97f4bccec4684697199c1b1d11b";
+            const Unitroller = "0xfd36e2c2a6789db23113685031d7f16329158384";
+            const VAIUnitroller = "0x004065D34C6b18cE4370ced1CeBDE94865DbFAFE";
+            const VAItokenAddr = "0x4BD17003473389A42DAF6a0a729f6Fdb328BbBd7";
+            const VenusChainlinkOracle = "0x7FabdD617200C9CB4dcf3dd2C41273e60552068A";
             const web3 = new Web3(provider);
-            let decimals = 1000000000000000000;
+            let decimals = 10**18;
+            VAIinfo();
+
+        async function myABI(ABIcontractAddr) {
+            try {
+                return await fetch(bscscangetABI + ABIcontractAddr + bscscanAPI).then(response => response.json()).then(data => { return JSON.parse(data.result); });
+            } catch (err) { }
+        }
+
+        async function VAIinfo() {
+            let VAIrepayRate = 0;
+            let VAIPrice = 0;
+            try {
+                let VAIControllerABI = await fetch(bscscangetABI + VAIController + bscscanAPI).then(response => response.json()).then(data => { return JSON.parse(data.result); });
+                let myVAIUnitroller = new web3.eth.Contract(VAIControllerABI, VAIUnitroller);
+                VAIrepayRate = await myVAIUnitroller.methods.getVAIRepayRate().call();
+
+                let VenusChainlinkOracleABI = await fetch(bscscangetABI + VenusChainlinkOracle + bscscanAPI).then(response => response.json()).then(data => { return JSON.parse(data.result); });
+                let myVenusChainlinkOracle = new web3.eth.Contract(VenusChainlinkOracleABI, VenusChainlinkOracle);
+                VAIPrice = await myVenusChainlinkOracle.methods.getUnderlyingPrice(VAItokenAddr).call();
+            } catch (err) { }
+            document.getElementById('VAIrepayRate').innerText = VAIrepayRate / decimals * 100 + '%';
+            document.getElementById('VAIPrice').innerText = VAIPrice / decimals;
+        }
+
+        async function getMintedRepayVAI() {
+            const accountAddress = document.getElementById("accountAddress").value;
             let mintedVAI = 0;
             let repayAmount = 0;
             try {
-                let ComptrollerAbi = await fetch(getBep20Abi + contractComptroller + bscscanAPI).then(response => response.json()).then(data => {
-                    return JSON.parse(data.result);
-                });
-                let myUnitroller = new web3.eth.Contract(ComptrollerAbi, contractUnitroller);
+                let ComptrollerABI = await fetch(bscscangetABI + Comptroller + bscscanAPI).then(response => response.json()).then(data => { return JSON.parse(data.result); });
+                let myUnitroller = new web3.eth.Contract(ComptrollerABI, Unitroller);
                 mintedVAI = await myUnitroller.methods.mintedVAIs(accountAddress).call();
-                let VAIControllerAbi = await fetch(getBep20Abi + contractVAIController + bscscanAPI).then(response => response.json()).then(data => {
-                    return JSON.parse(data.result);
-                });
-                let myVAIUnitroller = new web3.eth.Contract(VAIControllerAbi, contractVAIUnitroller);
+
+                let VAIControllerABI = await fetch(bscscangetABI + VAIController + bscscanAPI).then(response => response.json()).then(data => { return JSON.parse(data.result); });
+                let myVAIUnitroller = new web3.eth.Contract(VAIControllerABI, VAIUnitroller);
                 repayAmount = await myVAIUnitroller.methods.getVAIRepayAmount(accountAddress).call();
             } catch (err) { }
             document.getElementById("mintedVAI").innerHTML = mintedVAI / decimals;
