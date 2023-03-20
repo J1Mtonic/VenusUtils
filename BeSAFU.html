@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="author" content="J1Mtonic">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BeSAFU</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://mottie.github.io/tablesorter/css/theme.blue.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tablesorter@latest/dist/js/jquery.tablesorter.combined.min.js"></script>
+    <style> body,h1,h2,h3,h4,h5 {font-family: "Roboto", sans-serif; font-size: 9pt;} </style>
+</head>
+<body>
+    <form>
+        <p>
+            <label>Address: <input type="text" autocomplete="on" id="accountAddress" /></label>
+            <button type="button" onclick="javascript:scanAddress()">Scan</button>
+        </p>
+    </form>
+    <table id="tblDebtors" class="tblDebtors tablesorter">
+        <thead>
+            <th class="sorter-false">TxHash</th>
+            <th class="sorter-false">Approved</th>
+            <th class="sorter-false">ScamContract</th>
+            <th class="sorter-false">Reporter</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script type="text/javascript">
+        async function scanAddress() {
+            const targetMethodId = '0x095ea7b3';
+            const json1Url = 'https://raw.githubusercontent.com/J1Mtonic/BeSAFU/main/FakePhishing.json';            
+            const getBep20AccountTxlist = "https://api.bscscan.com/api?module=account&action=txlist&address=";
+            const getBep20AccountParams = "&startblock=0&endblock=99999999";
+            const bscscanAPI = "&apikey=J5HERDUSE8HWU7HISSURZY1349VBWHX31F";
+            const accountAddress = document.getElementById("accountAddress").value;
+            const json2Url = getBep20AccountTxlist + accountAddress + getBep20AccountParams + bscscanAPI;
+            
+            const [json1, json2] = await Promise.all([
+                fetch(json1Url).then(res => res.json()),
+                fetch(json2Url).then(res => res.json()),
+            ]);
+            const scamAddresses = new Set(json1.map(entry => entry.address.toLowerCase()));
+
+            let foundAddresses = json2.result.filter(transaction => {
+                return transaction.methodId.toLowerCase() === targetMethodId && Array.from(scamAddresses).some(address => transaction.input.toLowerCase().includes(address.slice(2)));
+            });
+
+            foundAddresses = foundAddresses.filter((transaction, index, self) => {
+                const sameToAndInputPrefix = self.filter(other => {
+                return other.to.toLowerCase() === transaction.to.toLowerCase() && other.input.slice(0, 74).toLowerCase() === transaction.input.slice(0, 74).toLowerCase();
+                });
+
+                const maxBlockNumberTransaction = sameToAndInputPrefix.reduce((prev, curr) => {
+                    return parseInt(curr.blockNumber) > parseInt(prev.blockNumber) ? curr : prev;
+                }, sameToAndInputPrefix[0]);
+
+                return !(maxBlockNumberTransaction && maxBlockNumberTransaction.input.slice(-64).toLowerCase() === '0000000000000000000000000000000000000000000000000000000000000000');
+            });
+
+            foundAddresses = foundAddresses.map(transaction => {
+                const addressInfo = json1.find(entry => transaction.input.toLowerCase().includes(entry.address.toLowerCase().slice(2)));
+
+                return {
+                hash: transaction.hash,
+                to: transaction.to,
+                address: addressInfo.address,
+                nameTag: addressInfo.nameTag,
+                reporter: addressInfo.reporter,
+                };
+            });
+
+            //console.log(foundAddresses); //0xc424fe2f32371aecbe1e43d01a8f297c55b7767e
+
+            renderData(foundAddresses);
+        }        
+        function renderData(foundAddressesObject) {
+            let i = 1;
+            $(function() { $(".tblDebtors").tablesorter({theme : 'blue'});});
+            Object.keys(foundAddressesObject).forEach((key) => {
+                hash = foundAddressesObject[key].hash;
+                approved = foundAddressesObject[key].to;
+                address = foundAddressesObject[key].address;
+                nameTag = foundAddressesObject[key].nameTag;
+                reporter = foundAddressesObject[key].reporter;
+                debtorRow(`${hash}`, `${approved}`, `${address}`, `${nameTag}`, `${reporter}`);
+            });
+        }
+        function debtorRow(hash, approved, address, nameTag, reporter) {
+            let addCtrl = "<tr>"
+                addCtrl += "<td>" + "<a href='https://bscscan.com/tx/" + hash + "' target='_blank'>" + hash + "</a>" + "</td>"
+                addCtrl += "<td>" + approved + "</td>"
+                addCtrl += "<td>" + address + " (" + nameTag + ")" + "</td>"
+                addCtrl += "<td>" + reporter + "</td>"
+                addCtrl += "</tr>";
+                $(".tblDebtors tbody").append(addCtrl);
+        }
+    </script>
+</body>
+</html>
