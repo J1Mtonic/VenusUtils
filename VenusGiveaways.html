@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="author" content="0xJ1M">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VenusGiveaways</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <style>
+        body {
+            font-family: "Roboto", sans-serif;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #161b28;
+        }
+        .form-container {
+            margin-top: 50px;
+            background-color: #242d3c;
+            border-radius: 5px;
+            padding: 20px;
+            width: 400px;
+            margin: 0 auto;
+        }
+        .logo-image {
+            width: 200px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #3a78ff;
+            border: none;
+            color: white;
+            padding: 10px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 0;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #accountAddress {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <img src="logo.venuscommunity.png" class="logo-image">
+        <form>
+            <p>
+                <label style="color: #8c95a6;">Address:</label>
+                <input type="text" autocomplete="on" id="accountAddress" />
+                <button type="button" id="scanButton" onclick="javascript:scanAddress()">Scan</button>
+            </p>
+        </form>
+        <div id="votingCount" style="color: #8c95a6;"></div>
+        <div id="XVSVotes" style="color: #8c95a6;"></div>
+        <div id="Qualifiable" style="color: #ffffff;"></div>
+    </div>
+    <script type="text/javascript">
+        async function scanAddress() {
+            const provider = new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org");
+            const getBep20Abi = "https://api.bscscan.com/api?module=contract&action=getabi&address=";
+            const getBep20AccountTxlist = "https://api.bscscan.com/api?module=account&action=txlist&address=";
+            const GovernorBravoDelegate = "0x360ac19648efc29d2b7b70bac227c35e909272fd";
+            const GovernorBravoDelegator = "0x2d56dc077072b53571b8252008c60e945108c75a";
+            const XVSVault = "0x0cf9a22e790d89b8e58469f217b50bb4c3ab068c";
+            const XVSVaultProxy = "0x051100480289e704d20e9DB4804837068f3f9204";
+            const getBep20AccountParams = "&startblock=0&endblock=99999999";
+            const bscscanAPI = "&apikey=J5HERDUSE8HWU7HISSURZY1349VBWHX31F";
+            const castVoteWithReasonID = '0x7b3c71d3';
+            const castVoteID = '0x56781388';
+            const Decimals = 18;
+            const web3 = new Web3(provider);
+            const accountAddress = document.getElementById("accountAddress").value;
+            const json2Url = getBep20AccountTxlist + GovernorBravoDelegator + getBep20AccountParams + bscscanAPI;
+
+            if (!accountAddress) {
+                alert('Address is required');
+                return;
+            }
+            try {
+                document.getElementById("scanButton").disabled = true;
+
+                let GovernorBravoDelegateAbi = await fetch(getBep20Abi + GovernorBravoDelegate + bscscanAPI).then(response => response.json()).then(data => {
+                    return JSON.parse(data.result);
+                });
+                const myGovernorBravoDelegator = new web3.eth.Contract(GovernorBravoDelegateAbi, GovernorBravoDelegator);
+                let latestProposal = await myGovernorBravoDelegator.methods.proposalCount().call();
+
+                const json2 = await fetch(json2Url).then(res => res.json());
+
+                let foundAddresses = json2.result.filter(transaction => {
+                    return (transaction.methodId.toLowerCase() === castVoteID || transaction.methodId.toLowerCase() === castVoteWithReasonID) &&
+                        transaction.from.toLowerCase() === accountAddress.toLowerCase();
+                });
+
+                renderData(foundAddresses);
+
+                let XVSVaultAbi = await fetch(getBep20Abi + XVSVault + bscscanAPI).then(response => response.json()).then(data => {
+                    return JSON.parse(data.result);
+                });
+                const myXVSVaultProxy = new web3.eth.Contract(XVSVaultAbi, XVSVaultProxy);
+                XVSvotes = await myXVSVaultProxy.methods.getCurrentVotes(accountAddress).call();
+                document.getElementById("XVSVotes").innerText = `XVS@Vault: ${(XVSvotes / Math.pow(10, Decimals)).toFixed(2)}`;
+
+                checkQualifiable();
+
+                function renderData(foundAddresses) {
+                    let counter = 0;
+                    let minProposalId = latestProposal - 4;
+
+                    foundAddresses.forEach((item) => {
+                        let proposalId = parseInt(item.input.slice(10, 74), 16);
+                        if (proposalId >= minProposalId && proposalId <= latestProposal) {
+                            counter++;
+                        }
+                    });
+                    document.getElementById('votingCount').innerText = `Voted: ${counter}/5 proposals`;
+                }
+
+                function checkQualifiable() {
+                    const votingCount = parseInt(document.getElementById('votingCount').innerText.split(':')[1].trim());
+                    const XVSVotes = parseFloat(document.getElementById('XVSVotes').innerText.split(':')[1].trim());
+                    let qualifiableSpan = document.getElementById('Qualifiable');
+
+                    qualifiableSpan.innerHTML = '<br>Qualifiable?: ';
+
+                    if (votingCount >= 3 && XVSVotes >= 50) {
+                        qualifiableSpan.innerHTML += '<span style="color: green;">YES</span>';
+                    } else {
+                        qualifiableSpan.innerHTML += '<span style="color: red;">NO</span>';
+                    }
+                }
+            } finally {
+                document.getElementById("scanButton").disabled = false;
+            }
+        }        
+    </script>
+</body>
+
+</html>
