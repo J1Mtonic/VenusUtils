@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta name="author" content="0xJ1M">
     <meta charset="utf-8">
@@ -28,7 +27,7 @@
             width: 200px;
             margin-bottom: 10px;
         }
-        button {
+        .search-button {
             background-color: #3a78ff;
             border: none;
             color: white;
@@ -40,6 +39,10 @@
             margin: 4px 0;
             cursor: pointer;
             border-radius: 5px;
+        }
+        .search-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         #accountAddress {
             width: 100%;
@@ -54,12 +57,12 @@
 
 <body>
     <div class="form-container">
-        <img src="logo.venuscommunity.png" class="logo-image">
+        <img src="logo.venuscommunity-min.svg" class="logo-image">
         <form>
             <p>
                 <label style="color: #8c95a6;">Address:</label>
                 <input type="text" autocomplete="on" id="accountAddress" />
-                <button type="button" id="scanButton" onclick="javascript:scanAddress()">Scan</button>
+                <button type="button" id="scanButton" class="search-button" onclick="javascript:scanAddress()">Check!</button>
             </p>
         </form>
         <div id="votingCount" style="color: #8c95a6;"></div>
@@ -125,7 +128,7 @@
                             counter++;
                         }
                     });
-                    document.getElementById('votingCount').innerText = `Voted: ${counter}/5 proposals`;
+                    document.getElementById('votingCount').innerText = `Voted: ${counter}/5 latest proposals`;
                 }
 
                 function checkQualifiable() {
@@ -147,5 +150,4 @@
         }        
     </script>
 </body>
-
 </html>
