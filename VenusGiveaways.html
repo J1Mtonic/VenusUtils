@@ -70,6 +70,53 @@
         <div id="Qualifiable" style="color: #ffffff;"></div>
     </div>
     <script type="text/javascript">
+        let cache = {};
+
+        async function fetchWithCache(url) {
+            if (cache[url]) {
+                return cache[url];
+            }
+            const response = await fetch(url);
+            const data = await response.json();
+            cache[url] = data;
+            return data;
+        }
+
+        async function getAbi(url) {
+            const data = await fetchWithCache(url);
+            return JSON.parse(data.result);
+        }
+
+        function renderData(foundAddresses, latestProposal,XVSvotes) {
+            const Decimals = 18;
+            let counter = 0;
+            let minProposalId = latestProposal - 4;
+
+            foundAddresses.forEach((item) => {
+                let proposalId = parseInt(item.input.slice(10, 74), 16);
+                if (proposalId >= minProposalId && proposalId <= latestProposal) {
+                    counter++;
+                }
+            });
+            document.getElementById('votingCount').innerText = `Voted: ${counter}/5 latest proposals`;
+            document.getElementById("XVSVotes").innerText = `XVS@Vault: ${(XVSvotes / Math.pow(10, Decimals)).toFixed(2)}`;
+        }
+
+        function checkQualifiable() {
+            const votingCount = parseInt(document.getElementById('votingCount').innerText.split(':')[1].trim());
+            const XVSVotes = parseFloat(document.getElementById('XVSVotes').innerText.split(':')[1].trim());
+            let qualifiableSpan = document.getElementById('Qualifiable');
+
+            qualifiableSpan.innerHTML = '<br>Qualifiable?: ';
+            if (votingCount >= 3 && XVSVotes >= 50) {
+                qualifiableSpan.innerHTML += '<span style="color: green;">YES</span>';
+            } else if ((votingCount >= 1 && XVSVotes < 50 && XVSVotes > 0) || (votingCount >= 1 && XVSVotes >= 50)) {
+                qualifiableSpan.innerHTML += '<span style="color: yellow;">YES, BUT...</span>';
+            } else {
+                qualifiableSpan.innerHTML += '<span style="color: red;">NO</span>';
+            }
+        }
+
         async function scanAddress() {
             const provider = new Web3.providers.HttpProvider("https://bsc-dataseed.binance.org");
             const getBep20Abi = "https://api.bscscan.com/api?module=contract&action=getabi&address=";
@@ -81,8 +128,7 @@
             const getBep20AccountParams = "&startblock=0&endblock=99999999";
             const bscscanAPI = "&apikey=J5HERDUSE8HWU7HISSURZY1349VBWHX31F";
             const castVoteWithReasonID = '0x7b3c71d3';
-            const castVoteID = '0x56781388';
-            const Decimals = 18;
+            const castVoteID = '0x56781388';            
             const web3 = new Web3(provider);
             const accountAddress = document.getElementById("accountAddress").value;
             const json2Url = getBep20AccountTxlist + GovernorBravoDelegator + getBep20AccountParams + bscscanAPI;
@@ -99,51 +145,21 @@
                 });
                 const myGovernorBravoDelegator = new web3.eth.Contract(GovernorBravoDelegateAbi, GovernorBravoDelegator);
                 let latestProposal = await myGovernorBravoDelegator.methods.proposalCount().call();
-
-                const json2 = await fetch(json2Url).then(res => res.json());
-
-                let foundAddresses = json2.result.filter(transaction => {
+                const json = await fetch(json2Url).then(res => res.json());
+                let foundAddresses = json.result.filter(transaction => {
                     return (transaction.methodId.toLowerCase() === castVoteID || transaction.methodId.toLowerCase() === castVoteWithReasonID) &&
                         transaction.from.toLowerCase() === accountAddress.toLowerCase();
-                });
-
-                renderData(foundAddresses);
-
+                });                
                 let XVSVaultAbi = await fetch(getBep20Abi + XVSVault + bscscanAPI).then(response => response.json()).then(data => {
                     return JSON.parse(data.result);
                 });
                 const myXVSVaultProxy = new web3.eth.Contract(XVSVaultAbi, XVSVaultProxy);
-                XVSvotes = await myXVSVaultProxy.methods.getCurrentVotes(accountAddress).call();
-                document.getElementById("XVSVotes").innerText = `XVS@Vault: ${(XVSvotes / Math.pow(10, Decimals)).toFixed(2)}`;
-
+                let XVSvotes = await myXVSVaultProxy.methods.getCurrentVotes(accountAddress).call();                
+                renderData(foundAddresses, latestProposal, XVSvotes);
                 checkQualifiable();
-
-                function renderData(foundAddresses) {
-                    let counter = 0;
-                    let minProposalId = latestProposal - 4;
-
-                    foundAddresses.forEach((item) => {
-                        let proposalId = parseInt(item.input.slice(10, 74), 16);
-                        if (proposalId >= minProposalId && proposalId <= latestProposal) {
-                            counter++;
-                        }
-                    });
-                    document.getElementById('votingCount').innerText = `Voted: ${counter}/5 latest proposals`;
-                }
-
-                function checkQualifiable() {
-                    const votingCount = parseInt(document.getElementById('votingCount').innerText.split(':')[1].trim());
-                    const XVSVotes = parseFloat(document.getElementById('XVSVotes').innerText.split(':')[1].trim());
-                    let qualifiableSpan = document.getElementById('Qualifiable');
-
-                    qualifiableSpan.innerHTML = '<br>Qualifiable?: ';
-
-                    if (votingCount >= 3 && XVSVotes >= 50) {
-                        qualifiableSpan.innerHTML += '<span style="color: green;">YES</span>';
-                    } else {
-                        qualifiableSpan.innerHTML += '<span style="color: red;">NO</span>';
-                    }
-                }
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred');
             } finally {
                 document.getElementById("scanButton").disabled = false;
             }
