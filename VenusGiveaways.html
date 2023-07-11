@@ -110,7 +110,7 @@
             qualifiableSpan.innerHTML = '<br>Qualifiable?: ';
             if (votingCount >= 3 && XVSVotes >= 50) {
                 qualifiableSpan.innerHTML += '<span style="color: green;">YES</span>';
-            } else if ((votingCount >= 1 && XVSVotes < 50 && XVSVotes > 0) || (votingCount >= 1 && XVSVotes >= 50)) {
+            } else if ((votingCount >= 1 && XVSVotes < 50 && XVSVotes >= 1) || (votingCount >= 1 && XVSVotes >= 50)) {
                 qualifiableSpan.innerHTML += '<span style="color: yellow;">YES, BUT...</span>';
             } else {
                 qualifiableSpan.innerHTML += '<span style="color: red;">NO</span>';
@@ -163,7 +163,7 @@
             } finally {
                 document.getElementById("scanButton").disabled = false;
             }
-        }        
+        }
     </script>
 </body>
 </html>
