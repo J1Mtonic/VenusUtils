@@ -1,5 +1,11 @@
 [
   {
+    "historical_unique_deposit_users": 7250,
+    "active_unique_deposit_users": 4671,
+    "last_block_evaluated": 31733140,
+    "total_staked": 6748537.639686936
+  },
+  {
     "user": "0x5c0540deee67bf6584ede790d3147e076aee78cb",
     "amount": 2.1
   },
@@ -18682,11 +18688,5 @@
   {
     "user": "0xebc4f290f67b59b002d6aa661e40b4d82eb3d53b",
     "amount": 10.1
-  },
-  {
-    "historical_unique_deposit_users": 7250,
-    "active_unique_deposit_users": 4671,
-    "last_block_evaluated": 31733140,
-    "total_staked": 6748537.639686936
   }
 ]
