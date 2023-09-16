@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "active_unique_deposit_users": 4629,
-    "last_block_evaluated": 31790806,
-    "total_staked": 6737406.854400714
+    "active_unique_deposit_users": 4602,
+    "last_block_evaluated": 31793317,
+    "total_staked": 6736506.269342427
   },
   "transactions": [
     {
@@ -287,7 +287,7 @@
     },
     {
       "user": "0xfcf1f8270a7e31fc9018d31d2b1cbbba1468de10",
-      "amount": 10882.235350873008
+      "amount": 10886.701921590726
     },
     {
       "user": "0x87a2b29d2a9c710958832c83d004fc4214fabd33",
@@ -1736,10 +1736,6 @@
     {
       "user": "0xa94ae44ac9c03ecbf0961ea68a7029e7cb677924",
       "amount": 646.5884758366057
-    },
-    {
-      "user": "0xa5edf977c1c4aa3c4dc6c641228fd9a0bf46aa2f",
-      "amount": 644.9741539957103
     },
     {
       "user": "0xbe37a98b9299ea02fabfd4c2b75a7e5f64574248",
@@ -9394,10 +9390,6 @@
       "amount": 10.24071689356
     },
     {
-      "user": "0x7e3c7bdc8e2547dd86ac6ad7fda9e70691b35780",
-      "amount": 10.24
-    },
-    {
       "user": "0xaee09af04285e02d19f05ff608c7548c3ca56730",
       "amount": 10.239579794221898
     },
@@ -10346,106 +10338,6 @@
       "amount": 10
     },
     {
-      "user": "0xa79568d50ceb95bf2c3fca8487a44b1ed5af7b14",
-      "amount": 10
-    },
-    {
-      "user": "0x0ae9285c65600d8f0dcbbd294127caeedb9bc84e",
-      "amount": 10
-    },
-    {
-      "user": "0x86b28dd260807b4311e81634728ba050d553b5c6",
-      "amount": 10
-    },
-    {
-      "user": "0xbb462cf53cc79adf9f09622d4e5d9d4edbdb6013",
-      "amount": 10
-    },
-    {
-      "user": "0x42fafd0202d9b68953e3126482ea733b02178bab",
-      "amount": 10
-    },
-    {
-      "user": "0xa2fccb6e71877c8a09b011267b9affbae1a2ebda",
-      "amount": 10
-    },
-    {
-      "user": "0xa18b283b83930ec4bec70ca985193d65eb839867",
-      "amount": 10
-    },
-    {
-      "user": "0xe2491b706f8f17cec77828d23a12e103058d1236",
-      "amount": 10
-    },
-    {
-      "user": "0x5b06e5631383434e364a196100815c8b00318748",
-      "amount": 10
-    },
-    {
-      "user": "0x558168b58d50edcd9203e5ea712d1d046ab524c0",
-      "amount": 10
-    },
-    {
-      "user": "0x3a49ce2f52fc3f19220b09d88cf9ac073e5fe8a5",
-      "amount": 10
-    },
-    {
-      "user": "0x577ca8fba9d26363e057736a094f5544e4095dd1",
-      "amount": 10
-    },
-    {
-      "user": "0xa3160d5aa37a37b9b19c245df2565a01fbf63a26",
-      "amount": 10
-    },
-    {
-      "user": "0xeaa2de63ebabc35f947666c6ff6567784d8d5baa",
-      "amount": 10
-    },
-    {
-      "user": "0x4aae622f77771702eb4f5622e20546e3b9b2c40e",
-      "amount": 10
-    },
-    {
-      "user": "0x56e946b6e18c7599ba52fdb3ea1364a071d4164a",
-      "amount": 10
-    },
-    {
-      "user": "0x7ba41da68a1c28d0233107d10578d620ddf76c3c",
-      "amount": 10
-    },
-    {
-      "user": "0x8ab1d55a46af1f13c8de07dd714549f0a04a7ddf",
-      "amount": 10
-    },
-    {
-      "user": "0xf64b377a342cd3b42fc4eb85d3cfed0c38ff44a3",
-      "amount": 10
-    },
-    {
-      "user": "0x99d3236be20ce64be1d386a6961c82fb263ad9f7",
-      "amount": 10
-    },
-    {
-      "user": "0xb6b48b5adbb941e94f3078e3f6658fa6a770b37f",
-      "amount": 10
-    },
-    {
-      "user": "0xd50e2cc1ddd2d87a919afc7b28f982579847f786",
-      "amount": 10
-    },
-    {
-      "user": "0xe395da6ba267b1f87a961c704b5161f3ce0fe3d8",
-      "amount": 10
-    },
-    {
-      "user": "0x1886181bb0c9462a2640034c152c5f19e99bfa0e",
-      "amount": 10
-    },
-    {
-      "user": "0x1e4ae2056a48ed47db17fc2773a75e38ff363616",
-      "amount": 10
-    },
-    {
       "user": "0xa0628df86fee0fdb325b813c9c3dd8f0ec67e002",
       "amount": 10
     },
@@ -10730,6 +10622,10 @@
       "amount": 9.9756
     },
     {
+      "user": "0x18aa05c900f67a6a8b89ddd8eab2e5e9c3c7e830",
+      "amount": 9.895203756784
+    },
+    {
       "user": "0xf3309d9f33b16535689f5eca3f6611010d9a5719",
       "amount": 9.8899
     },
@@ -10752,10 +10648,6 @@
     {
       "user": "0x570214655b3888137f778b6a831d43916354e1f9",
       "amount": 9.789838184049742
-    },
-    {
-      "user": "0x18aa05c900f67a6a8b89ddd8eab2e5e9c3c7e830",
-      "amount": 9.73267877691403
     },
     {
       "user": "0x80d3f26d2731d7c78caab8565c683176937a4270",
